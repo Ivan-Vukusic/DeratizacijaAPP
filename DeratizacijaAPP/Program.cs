@@ -1,4 +1,4 @@
-using DeratizacijaAPP.Data;
+ï»¿using DeratizacijaAPP.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -10,10 +10,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
-// prilagodba za dokumentaciju, èitati https://medium.com/geekculture/customizing-swagger-in-asp-net-core-5-2c98d03cbe52
+// prilagodba za dokumentaciju, Ã¨itati https://medium.com/geekculture/customizing-swagger-in-asp-net-core-5-2c98d03cbe52
 builder.Services.AddSwaggerGen(sgo =>
 { // sgo je instanca klase SwaggerGenOptions
-  // èitati https://devintxcontent.blob.core.windows.net/showcontent/Speaker%20Presentations%20Fall%202017/Web%20API%20Best%20Practices.pdf
+  // Äitati https://devintxcontent.blob.core.windows.net/showcontent/Speaker%20Presentations%20Fall%202017/Web%20API%20Best%20Practices.pdf
 
     var o = new Microsoft.OpenApi.Models.OpenApiInfo()
     {
@@ -22,7 +22,7 @@ builder.Services.AddSwaggerGen(sgo =>
         Contact = new Microsoft.OpenApi.Models.OpenApiContact()
         {
             Email = "ivukusic27@gmail.com",
-            Name = "Ivan Vukušiæ"
+            Name = "Ivan VukuÅ¡iÄ‡"
         },
         Description = "Ovo je dokumentacija za Deratizacija API"        
     };
@@ -33,8 +33,8 @@ builder.Services.AddSwaggerGen(sgo =>
     sgo.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
 });
 
-// Svi se od svuda na sve moguæe naèine mogu spojitina naš API
-// Èitati https://code-maze.com/aspnetcore-webapi-best-practices/
+// Svi se od svuda na sve moguÃ¦e naÄine mogu spojitina naÅ¡ API
+// ÄŒitati https://code-maze.com/aspnetcore-webapi-best-practices/
 builder.Services.AddCors(opcije =>
 {
     opcije.AddPolicy("CorsPolicy",
@@ -55,7 +55,7 @@ var app = builder.Build();
 //if (app.Environment.IsDevelopment())
 //{
     app.UseSwagger();
-    // Moguænost generiranja poziva rute u CMD i Powershell
+    // MoguÃ¦nost generiranja poziva rute u CMD i Powershell
     app.UseSwaggerUI(opcije =>
     {
         opcije.ConfigObject.
