@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Polaznik\\Documents\\GitHub\\DeratizacijaAPP\\DeratizacijaAPP\\DeratizacijaAPP\\DeratizacijaAPP.csproj": {}
+    "C:\\Users\\Polaznik\\Documents\\GitHub\\DeratizacijaAPP\\DeratizacijaAPP\\DeratizacijaAPP.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Polaznik\\Documents\\GitHub\\DeratizacijaAPP\\DeratizacijaAPP\\DeratizacijaAPP\\DeratizacijaAPP.csproj": {
+    "C:\\Users\\Polaznik\\Documents\\GitHub\\DeratizacijaAPP\\DeratizacijaAPP\\DeratizacijaAPP.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Polaznik\\Documents\\GitHub\\DeratizacijaAPP\\DeratizacijaAPP\\DeratizacijaAPP\\DeratizacijaAPP.csproj",
+        "projectUniqueName": "C:\\Users\\Polaznik\\Documents\\GitHub\\DeratizacijaAPP\\DeratizacijaAPP\\DeratizacijaAPP.csproj",
         "projectName": "DeratizacijaAPP",
-        "projectPath": "C:\\Users\\Polaznik\\Documents\\GitHub\\DeratizacijaAPP\\DeratizacijaAPP\\DeratizacijaAPP\\DeratizacijaAPP.csproj",
+        "projectPath": "C:\\Users\\Polaznik\\Documents\\GitHub\\DeratizacijaAPP\\DeratizacijaAPP\\DeratizacijaAPP.csproj",
         "packagesPath": "C:\\Users\\Polaznik\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Polaznik\\Documents\\GitHub\\DeratizacijaAPP\\DeratizacijaAPP\\DeratizacijaAPP\\obj\\",
+        "outputPath": "C:\\Users\\Polaznik\\Documents\\GitHub\\DeratizacijaAPP\\DeratizacijaAPP\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Polaznik\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -43,6 +43,14 @@
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[7.0.5, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[7.0.16, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[7.0.16, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
