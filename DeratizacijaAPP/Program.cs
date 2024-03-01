@@ -33,7 +33,7 @@ builder.Services.AddSwaggerGen(sgo =>
     sgo.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
 });
 
-// Svi se od svuda na sve moguæe načine mogu spojitina naš API
+// Svi se od svuda na sve moguće načine mogu spojiti na naš API
 // Čitati https://code-maze.com/aspnetcore-webapi-best-practices/
 builder.Services.AddCors(opcije =>
 {
@@ -55,7 +55,7 @@ var app = builder.Build();
 //if (app.Environment.IsDevelopment())
 //{
     app.UseSwagger();
-    // Moguænost generiranja poziva rute u CMD i Powershell
+    // Mogućnost generiranja poziva rute u CMD i Powershell
     app.UseSwaggerUI(opcije =>
     {
         opcije.ConfigObject.
