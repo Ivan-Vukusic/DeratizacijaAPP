@@ -1,4 +1,4 @@
-﻿using DeratizacijaAPP.Data;
+﻿ using DeratizacijaAPP.Data;
 using DeratizacijaAPP.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -54,6 +54,34 @@ namespace DeratizacijaAPP.Controllers
                     return new EmptyResult();
                 }
                 return new JsonResult(djelatnici);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable,
+                    ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Dohvaća jednog djelatnika za promjenu
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{sifra:int}")]
+        public IActionResult GetBySifra(int sifra)
+        {
+            if (!ModelState.IsValid || sifra <= 0)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                var djelatnik = _context.Djelatnici.Find(sifra);
+                if (djelatnik == null)
+                {
+                    return new EmptyResult();
+                }
+                return new JsonResult(djelatnik);
             }
             catch (Exception ex)
             {
