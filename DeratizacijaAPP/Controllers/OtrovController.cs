@@ -63,6 +63,34 @@ namespace DeratizacijaAPP.Controllers
         }
 
         /// <summary>
+        /// Dohvaća jedan otrov za promjenu
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{sifra:int}")]
+        public IActionResult GetBySifra(int sifra)
+        {
+            if (!ModelState.IsValid || sifra <= 0)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                var otrov = _context.Otrovi.Find(sifra);
+                if (otrov == null)
+                {
+                    return new EmptyResult();
+                }
+                return new JsonResult(otrov);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable,
+                    ex.Message);
+            }
+        }
+
+        /// <summary>
         /// Dodaje novi otrov u bazu
         /// </summary>
         /// <remarks>
