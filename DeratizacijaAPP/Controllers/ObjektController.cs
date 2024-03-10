@@ -1,16 +1,16 @@
-﻿using DeratizacijaAPP.Data;
-using DeratizacijaAPP.Extensions;
+﻿ using DeratizacijaAPP.Data;
 using DeratizacijaAPP.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DeratizacijaAPP.Controllers
 {
     /// <summary>
-    /// Namjenjeno za CRUD operacije nad entitetom Vrsta u bazi
+    /// Namjenjeno za CRUD operacije nad entitetom Objekt u bazi
     /// </summary>
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class VrstaController : ControllerBase
+    public class ObjektController : ControllerBase
     {
         /// <summary>
         /// Kontekst za rad s bazom koji će biti postavljen pomoći Dependency Injection-a
@@ -22,40 +22,41 @@ namespace DeratizacijaAPP.Controllers
         /// pomoću DI principa
         /// </summary>
         /// <param name="context"></param>
-        public VrstaController(DeratizacijaContext context)
+        public ObjektController(DeratizacijaContext context)
         {
             _context = context;
         }
 
         /// <summary>
-        /// Dohvaća sve vrste iz baze
+        /// Dohvaća sve objekte iz baze
         /// </summary>
         /// <remarks>
         /// Primjer upita
         /// 
-        ///     GET api/v1/vrsta
+        ///     GET api/v1/objekt
         /// 
         /// </remarks>
-        /// <returns>Vrste u bazi</returns>
+        /// <returns>Objekti u bazi</returns>
         /// <response code = "200">Sve ok, ako nema podataka content length: 0</response>
         /// <response code = "400">Zahtjev nije valjan</response>
         /// <response code = "503">Baza na koju se spajam nije dostupna</response>
         [HttpGet]
         public IActionResult Get()
         {
-            // Kontrola ukoliko upit nije valjan
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
             try
             {
-                var vrste = _context.Vrste.ToList();
-                if (vrste == null || vrste.Count == 0)
+                var objekti = _context.Objekti
+                    .Include(o => o.Vrsta)
+                    .ToList();
+                if (objekti == null || objekti.Count == 0)
                 {
                     return new EmptyResult();
                 }
-                return new JsonResult(vrste.MapVrstaReadList());
+                return new JsonResult(objekti);
             }
             catch (Exception ex)
             {
@@ -65,7 +66,7 @@ namespace DeratizacijaAPP.Controllers
         }
 
         /// <summary>
-        /// Dohvaća jednu vrstu objekta za promjenu
+        /// Dohvaća jedan objekt za promjenu
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -78,12 +79,12 @@ namespace DeratizacijaAPP.Controllers
             }
             try
             {
-                var vrsta = _context.Vrste.Find(sifra);
-                if (vrsta == null)
+                var objekt = _context.Objekti.Find(sifra);
+                if (objekt == null)
                 {
                     return new EmptyResult();
                 }
-                return new JsonResult(vrsta.MapVrstaReadToDTO());
+                return new JsonResult(objekt);
             }
             catch (Exception ex)
             {
@@ -93,30 +94,29 @@ namespace DeratizacijaAPP.Controllers
         }
 
         /// <summary>
-        /// Dodaje novu vrstu u bazu
+        /// Dodaje novi objekt u bazu
         /// </summary>
         /// <remarks>
-        ///     POST api/v1/vrsta
+        ///     POST api/v1/objekt
         ///     {naziv: "Primjer naziva"}
         /// </remarks>
-        /// <param name="vrsta">Vrsta za unijeti u JSON formatu</param>
+        /// <param name="objekt">Objekt za unijeti u JSON formatu</param>
         /// <response code="201">Kreirano</response>
         /// <response code="400">Zahtjev nije valjan</response> 
         /// <response code="503">Baza nedostupna</response> 
-        /// <returns>Vrsta s šifrom koju je dala baza</returns>
+        /// <returns>Objekt sa šifrom koju je dala baza</returns>
         [HttpPost]
-        public IActionResult Post(VrstaDTOInsertUpdate vrstaDTO)
+        public IActionResult Post(Objekt objekt)
         {
-            if (!ModelState.IsValid || vrstaDTO == null)
+            if (!ModelState.IsValid || objekt == null)
             {
                 return BadRequest();
             }
             try
             {
-                var vrsta = vrstaDTO.MapVrstaInsertUpdateFromDTO();
-                _context.Vrste.Add(vrsta);
+                _context.Objekti.Add(objekt);
                 _context.SaveChanges();
-                return StatusCode(StatusCodes.Status201Created, vrsta.MapVrstaReadToDTO());
+                return StatusCode(StatusCodes.Status201Created, objekt);
             }
             catch (Exception ex)
             {
@@ -126,47 +126,51 @@ namespace DeratizacijaAPP.Controllers
         }
 
         /// <summary>
-        /// Mijenja podatke postojeće vrste u bazi
+        /// Mijenja podatke postojećeg objekta u bazi
         /// </summary>
         /// <remarks>
         /// Primjer upita:
         ///
-        ///    PUT api/v1/vrsta/1
+        ///    PUT api/v1/objekt/1
         ///
         /// {
         ///  "sifra": 0,
-        ///  "naziv": "Novi naziv",  
+        ///  "mjesto": "Novo mjesto"
+        ///  "adresa": "Nova adresa"
+        ///  "vrsta": "Nova vrsta objekta"
         /// }
         /// </remarks>
-        /// <param name="sifra">Šifra vrste koja se mijenja</param>  
-        /// <param name="vrsta">Vrsta za unijeti u JSON formatu</param>         
+        /// <param name="sifra">Šifra objekta koji se mijenja</param>  
+        /// <param name="objekt">Objekt za unijeti u JSON formatu</param>         
         /// <response code="200">Sve je u redu</response>
-        /// <response code="204">Nema u bazi vrste koju želimo promijeniti</response>
+        /// <response code="204">Nema u bazi objekta kojeg želimo promijeniti</response>
         /// <response code="415">Nismo poslali JSON</response> 
         /// <response code="503">Baza nedostupna</response> 
-        /// <returns>Svi poslani podaci od vrste koji su spremljeni u bazi</returns>
+        /// <returns>Svi poslani podaci od objekta koji su spremljeni u bazi</returns>
         [HttpPut]
         [Route("{sifra:int}")]
-        public IActionResult Put(int sifra, VrstaDTOInsertUpdate vrstaDTO)
+        public IActionResult Put(int sifra, Objekt objekt)
         {
-            if (sifra <= 0 || !ModelState.IsValid || vrstaDTO == null)
+            if (sifra <= 0 || !ModelState.IsValid || objekt == null)
             {
                 return BadRequest();
             }
             try
             {
-                var vrstaUBazi = _context.Vrste.Find(sifra);
-                if (vrstaUBazi == null)
+                var objektUBazi = _context.Objekti.Find(sifra);
+                if (objektUBazi == null)
                 {
                     return StatusCode(StatusCodes.Status204NoContent, sifra);
                 }
 
-                var vrsta = vrstaDTO.MapVrstaInsertUpdateFromDTO();
-                vrsta.Sifra = sifra;
+                objektUBazi.Mjesto = objekt.Mjesto;
+                objektUBazi.Adresa = objekt.Adresa;
+                objektUBazi.Vrsta = objekt.Vrsta;
+                
 
-                _context.Vrste.Update(vrsta);
+                _context.Objekti.Update(objektUBazi);
                 _context.SaveChanges();
-                return StatusCode(StatusCodes.Status200OK, vrsta.MapVrstaReadToDTO);
+                return StatusCode(StatusCodes.Status200OK, objektUBazi);
             }
             catch (Exception ex)
             {
@@ -176,17 +180,17 @@ namespace DeratizacijaAPP.Controllers
         }
 
         /// <summary>
-        /// Briše vrstu iz baze
+        /// Briše objekt iz baze
         /// </summary>
         /// <remarks>
         /// Primjer upita:
         ///
-        ///    DELETE api/v1/vrsta/1
+        ///    DELETE api/v1/objekt/1
         ///    
         /// </remarks>
-        /// <param name="sifra">Šifra vrste koja se briše</param>  
+        /// <param name="sifra">Šifra objekta koji se briše</param>  
         /// <response code="200">Sve je u redu, obrisano je u bazi</response>
-        /// <response code="204">Nema u bazi smjera kojeg želimo obrisati</response>
+        /// <response code="204">Nema u bazi objekta kojeg želimo obrisati</response>
         /// <response code="503">Problem s bazom</response>
         /// <returns>Odgovor da li je obrisano ili ne</returns>
         [HttpDelete]
@@ -200,13 +204,13 @@ namespace DeratizacijaAPP.Controllers
             }
             try
             {
-                var vrstaUBazi = _context.Vrste.Find(sifra);
-                if (vrstaUBazi == null)
+                var objektUBazi = _context.Objekti.Find(sifra);
+                if (objektUBazi == null)
                 {
                     return StatusCode(StatusCodes.Status204NoContent, sifra);
                 }
 
-                _context.Vrste.Remove(vrstaUBazi);
+                _context.Objekti.Remove(objektUBazi);
                 _context.SaveChanges();
                 return new JsonResult(new { poruka = "Obrisano" });
             }

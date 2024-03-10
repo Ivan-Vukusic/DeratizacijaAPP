@@ -33,5 +33,14 @@ namespace DeratizacijaAPP.Data
         /// </summary>
         public DbSet<Otrov> Otrovi { get; set; }
 
+        /// <summary>
+        /// Objekti u bazi
+        /// </summary>
+        public DbSet<Objekt> Objekti { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Objekt>().HasOne(o => o.Vrsta);
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿namespace DeratizacijaAPP.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+namespace DeratizacijaAPP.Models
 {
     /// <summary>
     /// Ovo mi je POCO koji je mapiran na bazu
@@ -18,6 +19,7 @@
         /// <summary>
         /// Vrsta objekta
         /// </summary>
+        [ForeignKey("vrsta")]
         public Vrsta? Vrsta { get; set; }
 
     }
