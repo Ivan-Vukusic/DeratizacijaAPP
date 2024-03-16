@@ -43,6 +43,10 @@ namespace DeratizacijaAPP.Data
         /// </summary>
         public DbSet<Termin> Termini { get; set; }
 
+        /// <summary>
+        /// Povezivanje tablica 1:N
+        /// </summary>
+        /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Objekt>().HasOne(o => o.Vrsta);
