@@ -45,7 +45,7 @@
     public record OtrovDTOInsertUpdate(string naziv, 
         string aktivnaTvar, decimal kolicina, string casBroj);
 
-
+    
     /// <summary>
     /// DTO read za objekt
     /// </summary>
