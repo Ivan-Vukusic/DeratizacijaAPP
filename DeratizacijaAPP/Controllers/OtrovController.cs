@@ -1,4 +1,5 @@
 ﻿using DeratizacijaAPP.Data;
+using DeratizacijaAPP.Extensions;
 using DeratizacijaAPP.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -53,7 +54,7 @@ namespace DeratizacijaAPP.Controllers
                 {
                     return new EmptyResult();
                 }
-                return new JsonResult(otrovi);
+                return new JsonResult(otrovi.MapOtrovReadList());
             }
             catch (Exception ex)
             {
@@ -81,7 +82,7 @@ namespace DeratizacijaAPP.Controllers
                 {
                     return new EmptyResult();
                 }
-                return new JsonResult(otrov);
+                return new JsonResult(otrov.MapOtrovInsertUpdatedToDTO());
             }
             catch (Exception ex)
             {
@@ -103,17 +104,18 @@ namespace DeratizacijaAPP.Controllers
         /// <response code="503">Baza nedostupna</response> 
         /// <returns>Otrov sa šifrom koju je dala baza</returns>
         [HttpPost]
-        public IActionResult Post(Otrov otrov)
+        public IActionResult Post(OtrovDTOInsertUpdate otrovDTO)
         {
-            if (!ModelState.IsValid || otrov == null)
+            if (!ModelState.IsValid || otrovDTO == null)
             {
                 return BadRequest();
             }
             try
             {
+                var otrov = otrovDTO.MapOtrovInsertUpdateFromDTO(new Otrov());
                 _context.Otrovi.Add(otrov);
                 _context.SaveChanges();
-                return StatusCode(StatusCodes.Status201Created, otrov);
+                return StatusCode(StatusCodes.Status201Created, otrov.MapOtrovReadToDTO());
             }
             catch (Exception ex)
             {
@@ -147,9 +149,9 @@ namespace DeratizacijaAPP.Controllers
         /// <returns>Svi poslani podaci za otrov koji su spremljeni u bazi</returns>
         [HttpPut]
         [Route("{sifra:int}")]
-        public IActionResult Put(int sifra, Otrov otrov)
+        public IActionResult Put(int sifra, OtrovDTOInsertUpdate otrovDTO)
         {
-            if (sifra <= 0 || !ModelState.IsValid || otrov == null)
+            if (sifra <= 0 || !ModelState.IsValid || otrovDTO == null)
             {
                 return BadRequest();
             }
@@ -160,14 +162,12 @@ namespace DeratizacijaAPP.Controllers
                 {
                     return StatusCode(StatusCodes.Status204NoContent, sifra);
                 }
-                otrovUBazi.Naziv = otrov.Naziv;
-                otrovUBazi.AktivnaTvar = otrov.AktivnaTvar;
-                otrovUBazi.Kolicina = otrov.Kolicina;
-                otrovUBazi.CasBroj = otrov.CasBroj;
+
+                var otrov = otrovDTO.MapOtrovInsertUpdateFromDTO(otrovUBazi);
                 
-                _context.Otrovi.Update(otrovUBazi);
+                _context.Otrovi.Update(otrov);
                 _context.SaveChanges();
-                return StatusCode(StatusCodes.Status200OK, otrovUBazi);
+                return StatusCode(StatusCodes.Status200OK, otrov.MapOtrovReadToDTO());
             }
             catch (Exception ex)
             {
