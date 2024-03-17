@@ -1,4 +1,5 @@
 ﻿using DeratizacijaAPP.Data;
+using DeratizacijaAPP.Extensions;
 using DeratizacijaAPP.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -53,7 +54,7 @@ namespace DeratizacijaAPP.Controllers
                 {
                     return new EmptyResult();
                 }
-                return new JsonResult(vrste);
+                return new JsonResult(vrste.MapVrstaReadList());
             }
             catch (Exception ex)
             {
@@ -81,7 +82,7 @@ namespace DeratizacijaAPP.Controllers
                 {
                     return new EmptyResult();
                 }
-                return new JsonResult(vrsta);
+                return new JsonResult(vrsta.MapVrstaInsertUpdatedToDTO());
             }
             catch (Exception ex)
             {
@@ -103,17 +104,18 @@ namespace DeratizacijaAPP.Controllers
         /// <response code="503">Baza nedostupna</response> 
         /// <returns>Vrsta s šifrom koju je dala baza</returns>
         [HttpPost]
-        public IActionResult Post(Vrsta vrsta)
+        public IActionResult Post(VrstaDTOInsertUpdate dto)
         {
-            if (!ModelState.IsValid || vrsta == null)
+            if (!ModelState.IsValid || dto == null)
             {
                 return BadRequest();
             }
             try
-            {                
+            {
+                var vrsta = dto.MapVrstaInsertUpdateFromDTO(new Vrsta());
                 _context.Vrste.Add(vrsta);
                 _context.SaveChanges();
-                return StatusCode(StatusCodes.Status201Created, vrsta);
+                return StatusCode(StatusCodes.Status201Created, vrsta.MapVrstaReadToDTO());
             }
             catch (Exception ex)
             {
@@ -144,9 +146,9 @@ namespace DeratizacijaAPP.Controllers
         /// <returns>Svi poslani podaci od vrste koji su spremljeni u bazi</returns>
         [HttpPut]
         [Route("{sifra:int}")]
-        public IActionResult Put(int sifra, Vrsta vrsta)
+        public IActionResult Put(int sifra, VrstaDTOInsertUpdate dto)
         {
-            if (sifra <= 0 || !ModelState.IsValid || vrsta == null)
+            if (sifra <= 0 || !ModelState.IsValid || dto == null)
             {
                 return BadRequest();
             }
@@ -157,11 +159,12 @@ namespace DeratizacijaAPP.Controllers
                 {
                     return StatusCode(StatusCodes.Status204NoContent, sifra);
                 }
-                vrstaUBazi.Naziv = vrsta.Naziv;
 
-                _context.Vrste.Update(vrstaUBazi);
+                var vrsta = dto.MapVrstaInsertUpdateFromDTO(vrstaUBazi);
+
+                _context.Vrste.Update(vrsta);
                 _context.SaveChanges();
-                return StatusCode(StatusCodes.Status200OK, vrstaUBazi);
+                return StatusCode(StatusCodes.Status200OK, vrsta.MapVrstaReadToDTO());
             }
             catch (Exception ex)
             {

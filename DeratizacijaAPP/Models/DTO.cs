@@ -45,6 +45,18 @@
     public record OtrovDTOInsertUpdate(string naziv, 
         string aktivnaTvar, decimal kolicina, string casBroj);
 
+    /// <summary>
+    /// DTO read za vrstu
+    /// </summary>
+    /// <param name="sifra"></param>
+    /// <param name="naziv"></param>
+    public record VrstaDTORead(int sifra, string naziv);
+
+    /// <summary>
+    /// DTO insert/update za vrstu
+    /// </summary>
+    /// <param name="naziv"></param>
+    public record VrstaDTOInsertUpdate(string naziv);
     
     /// <summary>
     /// DTO read za objekt
@@ -53,7 +65,7 @@
     /// <param name="mjesto"></param>
     /// <param name="adresa"></param>
     /// <param name="vrsta"></param>
-    public record ObjektDTORead(int sifra, string mjesto, string adresa, string vrsta);
+    public record ObjektDTORead(int sifra, string? mjesto, string? adresa, string? vrstaNaziv);
 
     /// <summary>
     /// DTO insert/update za objekt
@@ -61,7 +73,7 @@
     /// <param name="mjesto"></param>
     /// <param name="adresa"></param>
     /// <param name="vrstaSifra"></param>
-    public record ObjektDTOInsertUpdate(string mjesto, string adresa, int vrstaSifra);
+    public record ObjektDTOInsertUpdate(string? mjesto, string? adresa, int? vrstaSifra);
 
 
     /// <summary>

@@ -10,17 +10,14 @@ namespace DeratizacijaAPP.Mappers
             return new Mapper(
                 new MapperConfiguration(c =>
                 {
-                    c.CreateMap<Objekt, ObjektDTORead>();
-                })
-                );
-        }
-
-        public static Mapper InicijalizirajReadFromDTO()
-        {
-            return new Mapper(
-                new MapperConfiguration(c =>
-                {
-                    c.CreateMap<ObjektDTORead, Objekt>();
+                    c.CreateMap<Objekt, ObjektDTORead>()
+                    .ConstructUsing(entitet =>
+                    new ObjektDTORead(
+                        entitet.Sifra,
+                        entitet.Mjesto,
+                        entitet.Adresa,
+                        entitet.Vrsta == null ? "" : entitet.Vrsta.Naziv
+                        ));
                 })
                 );
         }
@@ -30,7 +27,13 @@ namespace DeratizacijaAPP.Mappers
             return new Mapper(
                 new MapperConfiguration(c =>
                 {
-                    c.CreateMap<Objekt, ObjektDTOInsertUpdate>();
+                    c.CreateMap<Objekt, ObjektDTOInsertUpdate>()
+                    .ConstructUsing(entitet =>
+                    new ObjektDTOInsertUpdate(
+                        entitet.Mjesto,
+                        entitet.Adresa,
+                        entitet.Vrsta == null ? null : entitet.Vrsta.Sifra
+                        ));
                 })
                 );
         }

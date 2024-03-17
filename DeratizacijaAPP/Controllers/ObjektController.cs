@@ -1,4 +1,5 @@
-﻿ using DeratizacijaAPP.Data;
+﻿using DeratizacijaAPP.Data;
+using DeratizacijaAPP.Extensions;
 using DeratizacijaAPP.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -56,7 +57,7 @@ namespace DeratizacijaAPP.Controllers
                 {
                     return new EmptyResult();
                 }
-                return new JsonResult(objekti);
+                return new JsonResult(objekti.MapObjektReadList());
             }
             catch (Exception ex)
             {
@@ -79,12 +80,15 @@ namespace DeratizacijaAPP.Controllers
             }
             try
             {
-                var objekt = _context.Objekti.Find(sifra);
+                var objekt = _context.Objekti
+                    .Include(i => i.Vrsta)
+                    .FirstOrDefault(x => x.Sifra == sifra);
+
                 if (objekt == null)
                 {
                     return new EmptyResult();
                 }
-                return new JsonResult(objekt);
+                return new JsonResult(objekt.MapObjektInsertUpdatedToDTO());
             }
             catch (Exception ex)
             {
@@ -106,17 +110,29 @@ namespace DeratizacijaAPP.Controllers
         /// <response code="503">Baza nedostupna</response> 
         /// <returns>Objekt sa šifrom koju je dala baza</returns>
         [HttpPost]
-        public IActionResult Post(Objekt objekt)
+        public IActionResult Post(ObjektDTOInsertUpdate dto)
         {
-            if (!ModelState.IsValid || objekt == null)
+            if (!ModelState.IsValid || dto == null)
             {
                 return BadRequest();
             }
+
+            var vrsta = _context.Vrste.Find(dto.vrstaSifra);
+
+            if (vrsta == null)
+            {
+                return BadRequest();
+            }
+
+            var entitet = dto.MapObjektInsertUpdateFromDTO(new Objekt());
+
+            entitet.Vrsta = vrsta;
+
             try
             {
-                _context.Objekti.Add(objekt);
+                _context.Objekti.Add(entitet);
                 _context.SaveChanges();
-                return StatusCode(StatusCodes.Status201Created, objekt);
+                return StatusCode(StatusCodes.Status201Created, entitet.MapObjektReadToDTO());
             }
             catch (Exception ex)
             {
@@ -149,28 +165,35 @@ namespace DeratizacijaAPP.Controllers
         /// <returns>Svi poslani podaci od objekta koji su spremljeni u bazi</returns>
         [HttpPut]
         [Route("{sifra:int}")]
-        public IActionResult Put(int sifra, Objekt objekt)
+        public IActionResult Put(int sifra, ObjektDTOInsertUpdate dto)
         {
-            if (sifra <= 0 || !ModelState.IsValid || objekt == null)
+            if (sifra <= 0 || !ModelState.IsValid || dto == null)
             {
                 return BadRequest();
             }
             try
             {
-                var objektUBazi = _context.Objekti.Find(sifra);
-                if (objektUBazi == null)
+                var entitet = _context.Objekti.Include(i => i.Vrsta).FirstOrDefault(x => x.Sifra == sifra);
+                
+                if (entitet == null)
                 {
                     return StatusCode(StatusCodes.Status204NoContent, sifra);
                 }
 
-                objektUBazi.Mjesto = objekt.Mjesto;
-                objektUBazi.Adresa = objekt.Adresa;
-                objektUBazi.Vrsta = objekt.Vrsta;
+                var vrsta = _context.Vrste.Find(dto.vrstaSifra);
                 
+                if (vrsta == null)
+                {
+                    return BadRequest();
+                }
 
-                _context.Objekti.Update(objektUBazi);
+                entitet = dto.MapObjektInsertUpdateFromDTO(entitet);
+
+                entitet.Vrsta = vrsta;
+
+                _context.Objekti.Update(entitet);
                 _context.SaveChanges();
-                return StatusCode(StatusCodes.Status200OK, objektUBazi);
+                return StatusCode(StatusCodes.Status200OK, entitet.MapObjektReadToDTO());
             }
             catch (Exception ex)
             {
@@ -205,6 +228,7 @@ namespace DeratizacijaAPP.Controllers
             try
             {
                 var objektUBazi = _context.Objekti.Find(sifra);
+                
                 if (objektUBazi == null)
                 {
                     return StatusCode(StatusCodes.Status204NoContent, sifra);

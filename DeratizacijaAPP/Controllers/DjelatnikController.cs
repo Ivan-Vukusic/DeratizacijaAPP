@@ -104,15 +104,15 @@ namespace DeratizacijaAPP.Controllers
         /// <response code="503">Baza nedostupna</response> 
         /// <returns>Djelatnik sa šifrom koju je dala baza</returns>
         [HttpPost]
-        public IActionResult Post(DjelatnikDTOInsertUpdate djelatnikDTO)
+        public IActionResult Post(DjelatnikDTOInsertUpdate dto)
         {
-            if (!ModelState.IsValid || djelatnikDTO == null)
+            if (!ModelState.IsValid || dto == null)
             {
                 return BadRequest();
             }
             try
             {
-                var djelatnik = djelatnikDTO.MapDjelatnikInsertUpdateFromDTO(new Djelatnik());
+                var djelatnik = dto.MapDjelatnikInsertUpdateFromDTO(new Djelatnik());
                 _context.Djelatnici.Add(djelatnik);
                 _context.SaveChanges();
                 return StatusCode(StatusCodes.Status201Created, djelatnik.MapDjelatnikReadToDTO());
@@ -150,9 +150,9 @@ namespace DeratizacijaAPP.Controllers
         /// <returns>Svi poslani podaci od djelatnika koji su spremljeni u bazi</returns>
         [HttpPut]
         [Route("{sifra:int}")]
-        public IActionResult Put(int sifra, DjelatnikDTOInsertUpdate djelatnikDTO)
+        public IActionResult Put(int sifra, DjelatnikDTOInsertUpdate dto)
         {
-            if (sifra <= 0 || !ModelState.IsValid || djelatnikDTO == null)
+            if (sifra <= 0 || !ModelState.IsValid || dto == null)
             {
                 return BadRequest();
             }
@@ -164,7 +164,7 @@ namespace DeratizacijaAPP.Controllers
                     return StatusCode(StatusCodes.Status204NoContent, sifra);
                 }
                 
-                var djelatnik = djelatnikDTO.MapDjelatnikInsertUpdateFromDTO(djelatnikUBazi);
+                var djelatnik = dto.MapDjelatnikInsertUpdateFromDTO(djelatnikUBazi);
 
                 _context.Djelatnici.Update(djelatnik);
                 _context.SaveChanges();
