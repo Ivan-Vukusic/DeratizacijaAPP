@@ -1,4 +1,5 @@
-﻿ using DeratizacijaAPP.Data;
+﻿using DeratizacijaAPP.Data;
+using DeratizacijaAPP.Extensions;
 using DeratizacijaAPP.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -58,7 +59,7 @@ namespace DeratizacijaAPP.Controllers
                 {
                     return new EmptyResult();
                 }
-                return new JsonResult(termini);
+                return new JsonResult(termini.MapTerminReadList());
             }
             catch (Exception ex)
             {
@@ -81,12 +82,17 @@ namespace DeratizacijaAPP.Controllers
             }
             try
             {
-                var termin = _context.Termini.Find(sifra);
+                var termin = _context.Termini
+                    .Include(i => i.Djelatnik)
+                    .Include(i => i.Objekt)
+                    .Include(i => i.Otrov)
+                    .FirstOrDefault(x => x.Sifra == sifra);
+
                 if (termin == null)
                 {
                     return new EmptyResult();
                 }
-                return new JsonResult(termin);
+                return new JsonResult(termin.MapTerminInsertUpdatedToDTO());
             }
             catch (Exception ex)
             {
@@ -108,17 +114,45 @@ namespace DeratizacijaAPP.Controllers
         /// <response code="503">Baza nedostupna</response> 
         /// <returns>Termin sa šifrom koju je dala baza</returns>
         [HttpPost]
-        public IActionResult Post(Termin termin)
+        public IActionResult Post(TerminDTOInsertUpdate dto)
         {
-            if (!ModelState.IsValid || termin == null)
+            if (!ModelState.IsValid || dto == null)
             {
                 return BadRequest();
             }
+
+            var djelatnik = _context.Djelatnici.Find(dto.djelatnikSifra);
+
+            if (djelatnik == null) 
+            {
+                return BadRequest();
+            }
+
+            var objekt = _context.Objekti.Find(dto.objektSifra);
+
+            if (objekt == null)
+            {
+                return BadRequest();
+            }
+
+            var otrov = _context.Otrovi.Find(dto.otrovSifra);
+
+            if (otrov == null)
+            {
+                return BadRequest();
+            }
+
+            var entitet = dto.MapTerminInsertUpdateFromDTO(new Termin());
+
+            entitet.Djelatnik = djelatnik;
+            entitet.Objekt = objekt;
+            entitet.Otrov = otrov;
+
             try
             {
-                _context.Termini.Add(termin);
+                _context.Termini.Add(entitet);
                 _context.SaveChanges();
-                return StatusCode(StatusCodes.Status201Created, termin);
+                return StatusCode(StatusCodes.Status201Created, entitet.MapTerminReadToDTO());
             }
             catch (Exception ex)
             {
@@ -153,30 +187,56 @@ namespace DeratizacijaAPP.Controllers
         /// <returns>Svi poslani podaci od termina koji su spremljeni u bazi</returns>
         [HttpPut]
         [Route("{sifra:int}")]
-        public IActionResult Put(int sifra, Termin termin)
+        public IActionResult Put(int sifra, TerminDTOInsertUpdate dto)
         {
-            if (sifra <= 0 || !ModelState.IsValid || termin == null)
+            if (sifra <= 0 || !ModelState.IsValid || dto == null)
             {
                 return BadRequest();
             }
             try
             {
-                var terminUBazi = _context.Termini.Find(sifra);
-                if (terminUBazi == null)
+                var entitet = _context.Termini
+                    .Include(i => i.Djelatnik)
+                    .Include(i => i.Objekt)
+                    .Include(i => i.Otrov)
+                    .FirstOrDefault(x => x.Sifra == sifra);
+
+                if (entitet == null)
                 {
                     return StatusCode(StatusCodes.Status204NoContent, sifra);
                 }
 
-                terminUBazi.Datum = termin.Datum;
-                terminUBazi.Djelatnik = termin.Djelatnik;
-                terminUBazi.Objekt = termin.Objekt;
-                terminUBazi.Otrov = termin.Otrov;
-                terminUBazi.Napomena = termin.Napomena;
-                
+                var djelatnik = _context.Termini.Find(dto.djelatnikSifra);
 
-                _context.Termini.Update(terminUBazi);
+                if (djelatnik == null)
+                {
+                    return BadRequest();
+                }
+
+                var objekt = _context.Termini.Find(dto.objektSifra);
+
+                if (objekt == null)
+                {
+                    return BadRequest();
+                }
+
+                var otrov = _context.Termini.Find(dto.otrovSifra);
+
+                if (otrov == null)
+                {
+                    return BadRequest();
+                }
+
+                entitet = dto.MapTerminInsertUpdateFromDTO(entitet);
+
+                // POPRAVITI!!
+                //entitet.Djelatnik = djelatnik;
+                //entitet.Objekt = objekt;
+                //entitet.Otrov = otrov;
+
+                _context.Termini.Update(entitet);
                 _context.SaveChanges();
-                return StatusCode(StatusCodes.Status200OK, terminUBazi);
+                return StatusCode(StatusCodes.Status200OK, entitet.MapTerminReadToDTO());
             }
             catch (Exception ex)
             {

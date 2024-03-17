@@ -17,7 +17,7 @@ namespace DeratizacijaAPP.Mappers
                     entitet.Datum,
                     entitet.Djelatnik == null ? "" : (entitet.Djelatnik.Ime + " " + entitet.Djelatnik.Prezime).Trim(),
                     entitet.Objekt == null ? "" : (entitet.Objekt.Mjesto
-                        + " " + entitet.Objekt.Adresa).Trim(),
+                        + ", " + entitet.Objekt.Adresa).Trim(),
                     entitet.Otrov == null ? "" : entitet.Otrov.Naziv,
                     entitet.Napomena));
                     
