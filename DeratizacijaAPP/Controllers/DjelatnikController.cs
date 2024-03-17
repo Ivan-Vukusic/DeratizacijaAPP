@@ -1,4 +1,5 @@
 ﻿ using DeratizacijaAPP.Data;
+using DeratizacijaAPP.Extensions;
 using DeratizacijaAPP.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -53,7 +54,7 @@ namespace DeratizacijaAPP.Controllers
                 {
                     return new EmptyResult();
                 }
-                return new JsonResult(djelatnici);
+                return new JsonResult(djelatnici.MapDjelatnikReadList());
             }
             catch (Exception ex)
             {
@@ -81,7 +82,7 @@ namespace DeratizacijaAPP.Controllers
                 {
                     return new EmptyResult();
                 }
-                return new JsonResult(djelatnik);
+                return new JsonResult(djelatnik.MapDjelatnikInsertUpdatedToDTO());
             }
             catch (Exception ex)
             {
@@ -103,17 +104,18 @@ namespace DeratizacijaAPP.Controllers
         /// <response code="503">Baza nedostupna</response> 
         /// <returns>Djelatnik sa šifrom koju je dala baza</returns>
         [HttpPost]
-        public IActionResult Post(Djelatnik djelatnik)
+        public IActionResult Post(DjelatnikDTOInsertUpdate djelatnikDTO)
         {
-            if (!ModelState.IsValid || djelatnik == null)
+            if (!ModelState.IsValid || djelatnikDTO == null)
             {
                 return BadRequest();
             }
             try
             {
+                var djelatnik = djelatnikDTO.MapDjelatnikInsertUpdateFromDTO(new Djelatnik());
                 _context.Djelatnici.Add(djelatnik);
                 _context.SaveChanges();
-                return StatusCode(StatusCodes.Status201Created, djelatnik);
+                return StatusCode(StatusCodes.Status201Created, djelatnik.MapDjelatnikReadToDTO());
             }
             catch (Exception ex)
             {
@@ -148,9 +150,9 @@ namespace DeratizacijaAPP.Controllers
         /// <returns>Svi poslani podaci od djelatnika koji su spremljeni u bazi</returns>
         [HttpPut]
         [Route("{sifra:int}")]
-        public IActionResult Put(int sifra, Djelatnik djelatnik)
+        public IActionResult Put(int sifra, DjelatnikDTOInsertUpdate djelatnikDTO)
         {
-            if (sifra <= 0 || !ModelState.IsValid || djelatnik == null)
+            if (sifra <= 0 || !ModelState.IsValid || djelatnikDTO == null)
             {
                 return BadRequest();
             }
@@ -161,15 +163,12 @@ namespace DeratizacijaAPP.Controllers
                 {
                     return StatusCode(StatusCodes.Status204NoContent, sifra);
                 }
-                djelatnikUBazi.Ime = djelatnik.Ime;
-                djelatnikUBazi.Prezime = djelatnik.Prezime;
-                djelatnikUBazi.BrojMobitela = djelatnik.BrojMobitela;
-                djelatnikUBazi.Oib = djelatnik.Oib;
-                djelatnikUBazi.Struka = djelatnik.Struka;
+                
+                var djelatnik = djelatnikDTO.MapDjelatnikInsertUpdateFromDTO(djelatnikUBazi);
 
-                _context.Djelatnici.Update(djelatnikUBazi);
+                _context.Djelatnici.Update(djelatnik);
                 _context.SaveChanges();
-                return StatusCode(StatusCodes.Status200OK, djelatnikUBazi);
+                return StatusCode(StatusCodes.Status200OK, djelatnik.MapDjelatnikReadToDTO());
             }
             catch (Exception ex)
             {
@@ -204,6 +203,7 @@ namespace DeratizacijaAPP.Controllers
             try
             {
                 var djelatnikUBazi = _context.Djelatnici.Find(sifra);
+                
                 if (djelatnikUBazi == null)
                 {
                     return StatusCode(StatusCodes.Status204NoContent, sifra);

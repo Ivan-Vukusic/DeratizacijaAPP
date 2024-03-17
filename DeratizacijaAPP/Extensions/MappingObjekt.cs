@@ -29,10 +29,8 @@ namespace DeratizacijaAPP.Extensions
 
         public static Objekt MapObjektInsertUpdateFromDTO(this ObjektDTOInsertUpdate dto, Objekt entitet)
         {
-            entitet.Naziv = dto.naziv;
-            entitet.AktivnaTvar = dto.aktivnaTvar;
-            entitet.Kolicina = dto.kolicina;
-            entitet.CasBroj = dto.casBroj;            
+            entitet.Mjesto = dto.mjesto;
+            entitet.Adresa = dto.adresa;                                   
             return entitet;
         }
     }
