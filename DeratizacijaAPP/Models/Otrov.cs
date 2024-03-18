@@ -27,6 +27,6 @@ namespace DeratizacijaAPP.Models
         /// <summary>
         /// Registarski broj otrova
         /// </summary>
-        public string? CasBroj { get; set; }
+        public string? CasBroj { get; set; }        
     }
 }

@@ -33,6 +33,6 @@ namespace DeratizacijaAPP.Models
         /// <summary>
         /// Stručna sprema djelatnika
         /// </summary>
-        public string? Struka { get; set; }
+        public string? Struka { get; set; }        
     }
 }

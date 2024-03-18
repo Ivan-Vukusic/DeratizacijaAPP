@@ -20,7 +20,6 @@ namespace DeratizacijaAPP.Models
         /// Vrsta objekta
         /// </summary>
         [ForeignKey("vrsta")]
-        public Vrsta? Vrsta { get; set; }
-
+        public Vrsta? Vrsta { get; set; }        
     }
 }

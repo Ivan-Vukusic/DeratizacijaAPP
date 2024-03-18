@@ -206,21 +206,21 @@ namespace DeratizacijaAPP.Controllers
                     return StatusCode(StatusCodes.Status204NoContent, sifra);
                 }
 
-                var djelatnik = _context.Termini.Find(dto.djelatnikSifra);
+                var djelatnik = _context.Djelatnici.Find(dto.djelatnikSifra);
 
                 if (djelatnik == null)
                 {
                     return BadRequest();
                 }
 
-                var objekt = _context.Termini.Find(dto.objektSifra);
+                var objekt = _context.Objekti.Find(dto.objektSifra);
 
                 if (objekt == null)
                 {
                     return BadRequest();
                 }
 
-                var otrov = _context.Termini.Find(dto.otrovSifra);
+                var otrov = _context.Otrovi.Find(dto.otrovSifra);
 
                 if (otrov == null)
                 {
@@ -228,11 +228,10 @@ namespace DeratizacijaAPP.Controllers
                 }
 
                 entitet = dto.MapTerminInsertUpdateFromDTO(entitet);
-
-                // POPRAVITI!!
-                //entitet.Djelatnik = djelatnik;
-                //entitet.Objekt = objekt;
-                //entitet.Otrov = otrov;
+                                
+                entitet.Djelatnik = djelatnik;
+                entitet.Objekt = objekt;
+                entitet.Otrov = otrov;
 
                 _context.Termini.Update(entitet);
                 _context.SaveChanges();
