@@ -57,14 +57,14 @@
     /// </summary>
     /// <param name="naziv"></param>
     public record VrstaDTOInsertUpdate(string naziv);
-    
+
     /// <summary>
     /// DTO read za objekt
     /// </summary>
     /// <param name="sifra"></param>
     /// <param name="mjesto"></param>
     /// <param name="adresa"></param>
-    /// <param name="vrsta"></param>
+    /// <param name="vrstaNaziv"></param>    
     public record ObjektDTORead(int sifra, string? mjesto, string? adresa, string? vrstaNaziv);
 
     /// <summary>
