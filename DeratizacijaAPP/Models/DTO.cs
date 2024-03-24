@@ -23,7 +23,6 @@
     public record DjelatnikDTOInsertUpdate(string ime, string prezime,
         string brojMobitela, string oib, string struka);
 
-
     /// <summary>
     /// DTO read za otrov
     /// </summary>
@@ -74,7 +73,6 @@
     /// <param name="adresa"></param>
     /// <param name="vrstaSifra"></param>
     public record ObjektDTOInsertUpdate(string? mjesto, string? adresa, int? vrstaSifra);
-
 
     /// <summary>
     /// DTO read za termin
