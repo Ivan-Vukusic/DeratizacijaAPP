@@ -108,7 +108,7 @@ namespace DeratizacijaAPP.Controllers
         ///     POST api/v1/termin
         ///     {datum: "Primjer datuma: yyyy-mm-dd"}
         /// </remarks>
-        /// <param name="termin">Termin za unijeti u JSON formatu</param>
+        /// <param name="dto"></param>        
         /// <response code="201">Kreirano</response>
         /// <response code="400">Zahtjev nije valjan</response> 
         /// <response code="503">Baza nedostupna</response> 
@@ -178,8 +178,8 @@ namespace DeratizacijaAPP.Controllers
         ///  "napomena": "Nova napomena"
         /// }
         /// </remarks>
-        /// <param name="sifra">Šifra termina koji se mijenja</param>  
-        /// <param name="termin">Termin za unijeti u JSON formatu</param>         
+        /// <param name="sifra">Šifra termina koji se mijenja</param>
+        /// <param name="dto"></param>                  
         /// <response code="200">Sve je u redu</response>
         /// <response code="204">Nema u bazi termina kojeg želimo promijeniti</response>
         /// <response code="415">Nismo poslali JSON</response> 
