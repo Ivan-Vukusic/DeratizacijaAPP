@@ -1,4 +1,6 @@
-﻿namespace DeratizacijaAPP.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DeratizacijaAPP.Models
 {
     /// <summary>
     /// DTO read za djelatnika
@@ -9,8 +11,14 @@
     /// <param name="brojMobitela"></param>
     /// <param name="oib"></param>
     /// <param name="struka"></param>
-    public record DjelatnikDTORead(int sifra, string ime, string prezime,
-        string brojMobitela, string oib, string struka);
+    public record DjelatnikDTORead(
+        
+        int sifra, 
+        string ime, 
+        string prezime,
+        string? brojMobitela,
+        string? oib, 
+        string? struka);
 
     /// <summary>
     /// DTO insert/update za djelatnika
@@ -20,8 +28,20 @@
     /// <param name="brojMobitela"></param>
     /// <param name="oib"></param>
     /// <param name="struka"></param>
-    public record DjelatnikDTOInsertUpdate(string ime, string prezime,
-        string brojMobitela, string oib, string struka);
+    public record DjelatnikDTOInsertUpdate(
+       
+        [Required(ErrorMessage = "Ime obavezno")]
+        string? ime,
+
+        [Required(ErrorMessage = "Prezime obavezno")]
+        string? prezime,
+
+        string? brojMobitela,
+
+        [StringLength(11, MinimumLength = 11, ErrorMessage ="Neispravan unos! OIB mora imati 11 znamenki")]        
+        string? oib,
+
+        string? struka);
 
     /// <summary>
     /// DTO read za otrov
@@ -31,8 +51,13 @@
     /// <param name="aktivnaTvar"></param>
     /// <param name="kolicina"></param>
     /// <param name="casBroj"></param>
-    public record OtrovDTORead(int sifra, string naziv, 
-        string aktivnaTvar, decimal kolicina, string casBroj);
+    public record OtrovDTORead(
+        
+        int sifra, 
+        string naziv, 
+        string aktivnaTvar, 
+        decimal? kolicina, 
+        string? casBroj);
 
     /// <summary>
     /// DTO insert/update za otrov
@@ -41,8 +66,16 @@
     /// <param name="aktivnaTvar"></param>
     /// <param name="kolicina"></param>
     /// <param name="casBroj"></param>
-    public record OtrovDTOInsertUpdate(string naziv, 
-        string aktivnaTvar, decimal kolicina, string casBroj);
+    public record OtrovDTOInsertUpdate(
+       
+        [Required(ErrorMessage = "Naziv obavezan")]
+        string? naziv,
+
+        [Required(ErrorMessage = "Aktivna tvar obavezna")]
+        string? aktivnaTvar,
+        
+        decimal? kolicina,
+        string? casBroj);
 
     /// <summary>
     /// DTO read za vrstu
@@ -55,7 +88,10 @@
     /// DTO insert/update za vrstu
     /// </summary>
     /// <param name="naziv"></param>
-    public record VrstaDTOInsertUpdate(string naziv);
+    public record VrstaDTOInsertUpdate(
+
+        [Required(ErrorMessage = "Naziv obavezno")]
+        string? naziv);
 
     /// <summary>
     /// DTO read za objekt
@@ -64,7 +100,12 @@
     /// <param name="mjesto"></param>
     /// <param name="adresa"></param>
     /// <param name="vrstaNaziv"></param>    
-    public record ObjektDTORead(int sifra, string? mjesto, string? adresa, string? vrstaNaziv);
+    public record ObjektDTORead(
+        
+        int sifra, 
+        string mjesto, 
+        string adresa, 
+        string vrstaNaziv);
 
     /// <summary>
     /// DTO insert/update za objekt
@@ -72,7 +113,11 @@
     /// <param name="mjesto"></param>
     /// <param name="adresa"></param>
     /// <param name="vrstaSifra"></param>
-    public record ObjektDTOInsertUpdate(string? mjesto, string? adresa, int? vrstaSifra);
+    public record ObjektDTOInsertUpdate(
+        
+        string? mjesto, 
+        string? adresa, 
+        int? vrstaSifra);
 
     /// <summary>
     /// DTO read za termin
@@ -83,7 +128,13 @@
     /// <param name="objektMjestoAdresa"></param>
     /// <param name="otrovNaziv"></param>
     /// <param name="napomena"></param>
-    public record TerminDTORead(int sifra, DateTime? datum, string? djelatnikImePrezime, string? objektMjestoAdresa, string? otrovNaziv, string? napomena);
+    public record TerminDTORead(int sifra, 
+        
+        DateTime? datum, 
+        string? djelatnikImePrezime,
+        string? objektMjestoAdresa, 
+        string? otrovNaziv, 
+        string? napomena);
 
     /// <summary>
     /// DTO insert/update za termin
@@ -93,5 +144,11 @@
     /// <param name="objektSifra"></param>
     /// <param name="otrovSifra"></param>
     /// <param name="napomena"></param>
-    public record TerminDTOInsertUpdate(DateTime? datum, int? djelatnikSifra, int? objektSifra, int? otrovSifra, string? napomena);
+    public record TerminDTOInsertUpdate(
+        
+        DateTime? datum, 
+        int? djelatnikSifra, 
+        int? objektSifra, 
+        int? otrovSifra, 
+        string? napomena);
 }

@@ -9,14 +9,12 @@ namespace DeratizacijaAPP.Models
     {
         /// <summary>
         /// Ime djelatnika
-        /// </summary>
-        [Required(ErrorMessage = "Ime obavezno")]
+        /// </summary>        
         public string? Ime { get; set; }
 
         /// <summary>
         /// Prezime djelatnika
-        /// </summary>
-        [Required(ErrorMessage = "Prezime obavezno")]
+        /// </summary>        
         public string? Prezime { get; set; }
 
         /// <summary>
@@ -26,8 +24,7 @@ namespace DeratizacijaAPP.Models
 
         /// <summary>
         /// Oib djelatnika
-        /// </summary>
-        [StringLength(11, MinimumLength = 11, ErrorMessage ="Neispravan unos! OIB mora imati 11 znamenki")]
+        /// </summary>        
         public string? Oib { get; set; }
 
         /// <summary>

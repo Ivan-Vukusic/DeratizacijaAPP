@@ -9,8 +9,7 @@ namespace DeratizacijaAPP.Models
     {
         /// <summary>
         /// Naziv u bazi
-        /// </summary>
-        [Required(ErrorMessage = "Naziv obavezno")]
+        /// </summary>        
         public string? Naziv { get; set; }
     }
 }

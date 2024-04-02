@@ -9,14 +9,12 @@ namespace DeratizacijaAPP.Models
     {
         /// <summary>
         /// Naziv u bazi
-        /// </summary>
-        [Required(ErrorMessage = "Naziv obavezan")]
+        /// </summary>        
         public string? Naziv { get; set; }
 
         /// <summary>
         /// Vrsta aktivne tvari u otrovu
-        /// </summary>
-        [Required(ErrorMessage = "Aktivna tvar obavezna")]
+        /// </summary>        
         public string? AktivnaTvar { get; set; }
 
         /// <summary>
