@@ -14,8 +14,8 @@ namespace DeratizacijaAPP.Models
     public record DjelatnikDTORead(
         
         int sifra, 
-        string ime, 
-        string prezime,
+        string? ime, 
+        string? prezime,
         string? brojMobitela,
         string? oib, 
         string? struka);
@@ -54,8 +54,8 @@ namespace DeratizacijaAPP.Models
     public record OtrovDTORead(
         
         int sifra, 
-        string naziv, 
-        string aktivnaTvar, 
+        string? naziv, 
+        string? aktivnaTvar, 
         decimal? kolicina, 
         string? casBroj);
 
@@ -82,7 +82,7 @@ namespace DeratizacijaAPP.Models
     /// </summary>
     /// <param name="sifra"></param>
     /// <param name="naziv"></param>
-    public record VrstaDTORead(int sifra, string naziv);
+    public record VrstaDTORead(int sifra, string? naziv);
 
     /// <summary>
     /// DTO insert/update za vrstu
@@ -103,9 +103,9 @@ namespace DeratizacijaAPP.Models
     public record ObjektDTORead(
         
         int sifra, 
-        string mjesto, 
-        string adresa, 
-        string vrstaNaziv);
+        string? mjesto, 
+        string? adresa, 
+        string? vrstaNaziv);
 
     /// <summary>
     /// DTO insert/update za objekt
@@ -114,9 +114,13 @@ namespace DeratizacijaAPP.Models
     /// <param name="adresa"></param>
     /// <param name="vrstaSifra"></param>
     public record ObjektDTOInsertUpdate(
-        
-        string? mjesto, 
+
+        [Required(ErrorMessage = "Mjesto obavezno")]
+        string? mjesto,
+
+        [Required(ErrorMessage = "Adresa obavezna")]
         string? adresa, 
+
         int? vrstaSifra);
 
     /// <summary>
@@ -145,8 +149,10 @@ namespace DeratizacijaAPP.Models
     /// <param name="otrovSifra"></param>
     /// <param name="napomena"></param>
     public record TerminDTOInsertUpdate(
+
+        [Required(ErrorMessage = "Datum obavezan")]
+        DateTime? datum,
         
-        DateTime? datum, 
         int? djelatnikSifra, 
         int? objektSifra, 
         int? otrovSifra, 
