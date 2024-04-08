@@ -11,14 +11,7 @@ namespace DeratizacijaAPP.Models
     /// <param name="brojMobitela"></param>
     /// <param name="oib"></param>
     /// <param name="struka"></param>
-    public record DjelatnikDTORead(
-        
-        int sifra, 
-        string? ime, 
-        string? prezime,
-        string? brojMobitela,
-        string? oib, 
-        string? struka);
+    public record DjelatnikDTORead(int sifra, string? ime, string? prezime, string? brojMobitela, string? oib, string? struka);
 
     /// <summary>
     /// DTO insert/update za djelatnika
@@ -51,13 +44,7 @@ namespace DeratizacijaAPP.Models
     /// <param name="aktivnaTvar"></param>
     /// <param name="kolicina"></param>
     /// <param name="casBroj"></param>
-    public record OtrovDTORead(
-        
-        int sifra, 
-        string? naziv, 
-        string? aktivnaTvar, 
-        decimal? kolicina, 
-        string? casBroj);
+    public record OtrovDTORead(int sifra, string? naziv, string? aktivnaTvar, decimal? kolicina, string? casBroj);
 
     /// <summary>
     /// DTO insert/update za otrov
@@ -100,12 +87,7 @@ namespace DeratizacijaAPP.Models
     /// <param name="mjesto"></param>
     /// <param name="adresa"></param>
     /// <param name="vrstaNaziv"></param>    
-    public record ObjektDTORead(
-        
-        int sifra, 
-        string? mjesto, 
-        string? adresa, 
-        string? vrstaNaziv);
+    public record ObjektDTORead(int sifra, string? mjesto, string? adresa, string? vrstaNaziv);
 
     /// <summary>
     /// DTO insert/update za objekt
@@ -132,13 +114,8 @@ namespace DeratizacijaAPP.Models
     /// <param name="objektMjestoAdresa"></param>
     /// <param name="otrovNaziv"></param>
     /// <param name="napomena"></param>
-    public record TerminDTORead(int sifra, 
-        
-        DateTime? datum, 
-        string? djelatnikImePrezime,
-        string? objektMjestoAdresa, 
-        string? otrovNaziv, 
-        string? napomena);
+    public record TerminDTORead(int sifra, DateTime? datum, string? djelatnikImePrezime, 
+        string? objektMjestoAdresa, string? otrovNaziv, string? napomena);
 
     /// <summary>
     /// DTO insert/update za termin
@@ -152,8 +129,8 @@ namespace DeratizacijaAPP.Models
 
         [Required(ErrorMessage = "Datum obavezan")]
         DateTime? datum,
-        
-        int? djelatnikSifra, 
+
+        int? djelatnikSifra,
         int? objektSifra, 
         int? otrovSifra, 
         string? napomena);

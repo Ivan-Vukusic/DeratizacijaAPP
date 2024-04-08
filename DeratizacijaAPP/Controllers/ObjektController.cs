@@ -1,8 +1,9 @@
-﻿using DeratizacijaAPP.Data;
-using DeratizacijaAPP.Extensions;
+﻿using Microsoft.EntityFrameworkCore;
+using DeratizacijaAPP.Data;
 using DeratizacijaAPP.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Text;
+
 
 namespace DeratizacijaAPP.Controllers
 {
@@ -11,239 +12,68 @@ namespace DeratizacijaAPP.Controllers
     /// </summary>
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class ObjektController : ControllerBase
+    public class ObjektController : DeratizacijaController<Objekt, ObjektDTORead, ObjektDTOInsertUpdate>
     {
-        /// <summary>
-        /// Kontekst za rad s bazom koji će biti postavljen pomoći Dependency Injection-a
-        /// </summary>
-        private readonly DeratizacijaContext _context;
 
-        /// <summary>
-        /// Konstruktor klase koja prima Deratizacija kontekst
-        /// pomoću DI principa
-        /// </summary>
-        /// <param name="context"></param>
-        public ObjektController(DeratizacijaContext context)
+        public ObjektController(DeratizacijaContext context) : base(context)
         {
-            _context = context;
+            DbSet = _context.Objekti;
         }
 
-        /// <summary>
-        /// Dohvaća sve objekte iz baze
-        /// </summary>
-        /// <remarks>
-        /// Primjer upita
-        /// 
-        ///     GET api/v1/objekt
-        /// 
-        /// </remarks>
-        /// <returns>Objekti u bazi</returns>
-        /// <response code = "200">Sve ok, ako nema podataka content length: 0</response>
-        /// <response code = "400">Zahtjev nije valjan</response>
-        /// <response code = "503">Baza na koju se spajam nije dostupna</response>
-        [HttpGet]
-        public IActionResult Get()
+        protected override void KontrolaBrisanje(Objekt entitet)
         {
-            if (!ModelState.IsValid)
+            var lista = _context.Termini.Include(x => x.Objekt).Where(x => x.Objekt.Sifra == entitet.Sifra).ToList();
+
+            if (lista != null && lista.Count() > 0)
             {
-                return BadRequest(ModelState);
+                StringBuilder sb = new StringBuilder();
+                sb.Append("Objekt se ne može obrisati jer je postavljen na terminima: ");
+                foreach (var e in lista)
+                {
+                    sb.Append(e.Datum).Append(", ");
+                }
+
+                throw new Exception(sb.ToString().Substring(0, sb.ToString().Length - 2));
             }
-            try
-            {
-                var objekti = _context.Objekti
+        }
+
+        protected override List<ObjektDTORead> UcitajSve()
+        {
+            var lista = _context.Objekti
                     .Include(o => o.Vrsta)
                     .ToList();
-                if (objekti == null || objekti.Count == 0)
-                {
-                    return new EmptyResult();
-                }
-                return new JsonResult(objekti.MapObjektReadList());
-            }
-            catch (Exception ex)
+            if (lista == null || lista.Count == 0)
             {
-                return StatusCode(StatusCodes.Status503ServiceUnavailable,
-                    ex.Message);
+                throw new Exception("Ne postoje podaci u bazi");
             }
+            return _mapper.MapReadList(lista);
         }
 
-        /// <summary>
-        /// Dohvaća jedan objekt za promjenu
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("{sifra:int}")]
-        public IActionResult GetBySifra(int sifra)
+        protected override Objekt NadiEntitet(int sifra)
         {
-            if (!ModelState.IsValid || sifra <= 0)
-            {
-                return BadRequest(ModelState);
-            }
-            try
-            {
-                var objekt = _context.Objekti
-                    .Include(i => i.Vrsta)
-                    .FirstOrDefault(x => x.Sifra == sifra);
-
-                if (objekt == null)
-                {
-                    return new EmptyResult();
-                }
-                return new JsonResult(objekt.MapObjektInsertUpdatedToDTO());
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status503ServiceUnavailable,
-                    ex.Message);
-            }
+            return _context.Objekti.Include(i => i.Vrsta).FirstOrDefault(x => x.Sifra == sifra) ?? throw new Exception("Ne postoji objekt s šifrom " + sifra + " u bazi");
         }
 
-        /// <summary>
-        /// Dodaje novi objekt u bazu
-        /// </summary>
-        /// <remarks>
-        ///     POST api/v1/objekt
-        ///     {naziv: "Primjer naziva"}
-        /// </remarks>
-        /// <param name="objekt">Objekt za unijeti u JSON formatu</param>
-        /// <response code="201">Kreirano</response>
-        /// <response code="400">Zahtjev nije valjan</response> 
-        /// <response code="503">Baza nedostupna</response> 
-        /// <returns>Objekt sa šifrom koju je dala baza</returns>
-        [HttpPost]
-        public IActionResult Post(ObjektDTOInsertUpdate dto)
+        protected override Objekt KreirajEntitet(ObjektDTOInsertUpdate dto)
         {
-            if (!ModelState.IsValid || dto == null)
-            {
-                return BadRequest();
-            }
+            var vrsta = _context.Vrste.Find(dto.vrstaSifra) ?? throw new Exception("Ne postoji vrsta s šifrom " + dto.vrstaSifra + " u bazi");
+            var entitet = _mapper.MapInsertUpdatedFromDTO(dto);           
+            entitet.Vrsta = vrsta;
+            return entitet;
+        }
 
-            var vrsta = _context.Vrste.Find(dto.vrstaSifra);
-
-            if (vrsta == null)
-            {
-                return BadRequest();
-            }
-
-            var entitet = dto.MapObjektInsertUpdateFromDTO(new Objekt());
-
+        protected override Objekt PromjeniEntitet(ObjektDTOInsertUpdate dto, Objekt entitet)
+        {
+            var vrsta = _context.Vrste.Find(dto.vrstaSifra) ?? throw new Exception("Ne postoji vrsta s šifrom " + dto.vrstaSifra + " u bazi");
+            
+            entitet.Mjesto = dto.mjesto;
+            entitet.Adresa = dto.adresa;
             entitet.Vrsta = vrsta;
 
-            try
-            {
-                _context.Objekti.Add(entitet);
-                _context.SaveChanges();
-                return StatusCode(StatusCodes.Status201Created, entitet.MapObjektReadToDTO());
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status503ServiceUnavailable,
-                    ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Mijenja podatke postojećeg objekta u bazi
-        /// </summary>
-        /// <remarks>
-        /// Primjer upita:
-        ///
-        ///    PUT api/v1/objekt/1
-        ///
-        /// {
-        ///  "sifra": 0,
-        ///  "mjesto": "Novo mjesto"
-        ///  "adresa": "Nova adresa"
-        ///  "vrsta": "Nova vrsta objekta"
-        /// }
-        /// </remarks>
-        /// <param name="sifra">Šifra objekta koji se mijenja</param>  
-        /// <param name="objekt">Objekt za unijeti u JSON formatu</param>         
-        /// <response code="200">Sve je u redu</response>
-        /// <response code="204">Nema u bazi objekta kojeg želimo promijeniti</response>
-        /// <response code="415">Nismo poslali JSON</response> 
-        /// <response code="503">Baza nedostupna</response> 
-        /// <returns>Svi poslani podaci od objekta koji su spremljeni u bazi</returns>
-        [HttpPut]
-        [Route("{sifra:int}")]
-        public IActionResult Put(int sifra, ObjektDTOInsertUpdate dto)
-        {
-            if (sifra <= 0 || !ModelState.IsValid || dto == null)
-            {
-                return BadRequest();
-            }
-            try
-            {
-                var entitet = _context.Objekti.Include(i => i.Vrsta).FirstOrDefault(x => x.Sifra == sifra);
-                
-                if (entitet == null)
-                {
-                    return StatusCode(StatusCodes.Status204NoContent, sifra);
-                }
-
-                var vrsta = _context.Vrste.Find(dto.vrstaSifra);
-                
-                if (vrsta == null)
-                {
-                    return BadRequest();
-                }
-
-                entitet = dto.MapObjektInsertUpdateFromDTO(entitet);
-
-                entitet.Vrsta = vrsta;
-
-                _context.Objekti.Update(entitet);
-                _context.SaveChanges();
-                return StatusCode(StatusCodes.Status200OK, entitet.MapObjektReadToDTO());
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status503ServiceUnavailable,
-                    ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Briše objekt iz baze
-        /// </summary>
-        /// <remarks>
-        /// Primjer upita:
-        ///
-        ///    DELETE api/v1/objekt/1
-        ///    
-        /// </remarks>
-        /// <param name="sifra">Šifra objekta koji se briše</param>  
-        /// <response code="200">Sve je u redu, obrisano je u bazi</response>
-        /// <response code="204">Nema u bazi objekta kojeg želimo obrisati</response>
-        /// <response code="503">Problem s bazom</response>
-        /// <returns>Odgovor da li je obrisano ili ne</returns>
-        [HttpDelete]
-        [Route("{sifra:int}")]
-        [Produces("aplication/json")]
-        public IActionResult Delete(int sifra)
-        {
-            if (!ModelState.IsValid || sifra <= 0)
-            {
-                return BadRequest();
-            }
-            try
-            {
-                var objektUBazi = _context.Objekti.Find(sifra);
-                
-                if (objektUBazi == null)
-                {
-                    return StatusCode(StatusCodes.Status204NoContent, sifra);
-                }
-
-                _context.Objekti.Remove(objektUBazi);
-                _context.SaveChanges();
-                return new JsonResult(new { poruka = "Obrisano" });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status503ServiceUnavailable,
-                    ex.Message);
-            }
+            return entitet;
         }
 
     }
 }
+
+

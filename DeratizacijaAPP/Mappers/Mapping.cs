@@ -7,7 +7,7 @@ namespace DeratizacijaAPP.Mappers
 
         protected Mapper MapperMapReadToDTO;
         protected Mapper MapperMapInsertUpdatedFromDTO;
-        protected Mapper MapperMapMapInsertUpdateToDTO;
+        protected Mapper MapperMapInsertUpdateToDTO;
 
         public Mapping()
         {
@@ -25,7 +25,7 @@ namespace DeratizacijaAPP.Mappers
                 })
                 );
 
-            MapperMapMapInsertUpdateToDTO = new Mapper(
+            MapperMapInsertUpdateToDTO = new Mapper(
                 new MapperConfiguration(c =>
                 {
                     c.CreateMap<T, DTI>();
@@ -55,7 +55,7 @@ namespace DeratizacijaAPP.Mappers
 
         public DTI MapInsertUpdateToDTO(T entitet)
         {
-            return MapperMapMapInsertUpdateToDTO.Map<DTI>(entitet);
+            return MapperMapInsertUpdateToDTO.Map<DTI>(entitet);
         }
 
 

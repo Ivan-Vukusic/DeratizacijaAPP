@@ -3,28 +3,34 @@ using DeratizacijaAPP.Models;
 
 namespace DeratizacijaAPP.Mappers
 {
-    public class ObjektMapper
+    public class MappingObjekt : Mapping<Objekt, ObjektDTORead, ObjektDTOInsertUpdate>
     {
-        public static Mapper InicijalizirajReadToDTO()
+        public MappingObjekt()
         {
-            return new Mapper(
+            MapperMapReadToDTO = new Mapper(
                 new MapperConfiguration(c =>
                 {
                     c.CreateMap<Objekt, ObjektDTORead>()
                     .ConstructUsing(entitet =>
-                    new ObjektDTORead(
+                     new ObjektDTORead(
                         entitet.Sifra,
                         entitet.Mjesto,
                         entitet.Adresa,
                         entitet.Vrsta == null ? "" : entitet.Vrsta.Naziv
                         ));
+
                 })
                 );
-        }
 
-        public static Mapper InicijalizirajInsertUpdateToDTO()
-        {
-            return new Mapper(
+
+            MapperMapInsertUpdatedFromDTO = new Mapper(
+                new MapperConfiguration(c =>
+                {
+                    c.CreateMap<ObjektDTOInsertUpdate, Objekt>();
+                })
+                );
+
+            MapperMapInsertUpdateToDTO = new Mapper(
                 new MapperConfiguration(c =>
                 {
                     c.CreateMap<Objekt, ObjektDTOInsertUpdate>()
@@ -36,6 +42,9 @@ namespace DeratizacijaAPP.Mappers
                         ));
                 })
                 );
+
+
         }
     }
+
 }
