@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace DeratizacijaAPP.Models
+﻿namespace DeratizacijaAPP.Models
 {
     /// <summary>
     /// Ovo mi je POCO koji je mapiran na bazu

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DeratizacijaAPP.Validations;
+using System.ComponentModel.DataAnnotations;
 
 namespace DeratizacijaAPP.Models
 {
@@ -11,7 +12,8 @@ namespace DeratizacijaAPP.Models
     /// <param name="brojMobitela"></param>
     /// <param name="oib"></param>
     /// <param name="struka"></param>
-    public record DjelatnikDTORead(int sifra, string? ime, string? prezime, string? brojMobitela, string? oib, string? struka);
+    /// <param name="slika"></param>
+    public record DjelatnikDTORead(int sifra, string? ime, string? prezime, string? brojMobitela, string? oib, string? struka, string? slika);
 
     /// <summary>
     /// DTO insert/update za djelatnika
@@ -21,6 +23,7 @@ namespace DeratizacijaAPP.Models
     /// <param name="brojMobitela"></param>
     /// <param name="oib"></param>
     /// <param name="struka"></param>
+    /// <param name="slika"></param>
     public record DjelatnikDTOInsertUpdate(
        
         [Required(ErrorMessage = "Ime obavezno")]
@@ -31,10 +34,12 @@ namespace DeratizacijaAPP.Models
 
         string? brojMobitela,
 
-        [StringLength(11, MinimumLength = 11, ErrorMessage ="Neispravan unos! OIB mora imati 11 znamenki")]        
+        [StringLength(11, MinimumLength = 11, ErrorMessage ="Neispravan unos! OIB mora imati 11 znamenki")]
+        [OibValidator]
         string? oib,
 
-        string? struka);
+        string? struka,
+        string? slika);
 
     /// <summary>
     /// DTO read za otrov
@@ -134,4 +139,21 @@ namespace DeratizacijaAPP.Models
         int? objektSifra, 
         int? otrovSifra, 
         string? napomena);
+
+    /// <summary>
+    /// Operater
+    /// </summary>
+    /// <param name="email"></param>
+    /// <param name="password"></param>
+    public record OperaterDTO(
+        [Required(ErrorMessage = "Email obavezno")]
+        string? email,
+        [Required(ErrorMessage = "Lozinka obavezno")]
+        string? password);
+
+    /// <summary>
+    /// Slika
+    /// </summary>
+    /// <param name="Base64"></param>
+    public record SlikaDTO([Required(ErrorMessage = "Base64 zapis slike obavezno")] string Base64);
 }

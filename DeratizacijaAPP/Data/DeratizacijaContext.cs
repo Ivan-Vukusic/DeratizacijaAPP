@@ -44,6 +44,11 @@ namespace DeratizacijaAPP.Data
         public DbSet<Termin> Termini { get; set; }
 
         /// <summary>
+        /// Operateri
+        /// </summary>
+        public DbSet<Operater> Operateri { get; set; }
+
+        /// <summary>
         /// Povezivanje tablica 1:N
         /// </summary>
         /// <param name="modelBuilder"></param>

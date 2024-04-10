@@ -3,10 +3,12 @@ using DeratizacijaAPP.Data;
 using DeratizacijaAPP.Mappers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace DeratizacijaAPP.Controllers
 {
+    [Authorize]
     public abstract class DeratizacijaController<T, TDR, TDI> : ControllerBase where T : Entitet
     {
         protected DbSet<T> DbSet;
@@ -138,12 +140,7 @@ namespace DeratizacijaAPP.Controllers
             }
 
             return entitetIzbaze;
-        }
-
-        protected virtual TDR UcitajJedan(int sifra)
-        {
-            return _mapper.MapReadToDTO(DbSet.Find(sifra));
-        }
+        }        
 
         protected virtual List<TDR> UcitajSve()
         {

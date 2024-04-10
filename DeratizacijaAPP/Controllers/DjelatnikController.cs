@@ -1,4 +1,5 @@
 ﻿using DeratizacijaAPP.Data;
+using DeratizacijaAPP.Mappers;
 using DeratizacijaAPP.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,44 @@ namespace DeratizacijaAPP.Controllers
         public DjelatnikController(DeratizacijaContext context) : base(context)
         {
             DbSet = _context.Djelatnici;
+            _mapper = new MappingDjelatnik();
+        }
+
+        [HttpPut]
+        [Route("postaviSliku/{sifra:int}")]
+        public IActionResult PostaviSliku(int sifra, SlikaDTO slika)
+        {
+            if (sifra <= 0)
+            {
+                return BadRequest("Šifra mora biti veća od nula (0)");
+            }
+            if (slika.Base64 == null || slika.Base64?.Length == 0)
+            {
+                return BadRequest("Slika nije postavljena");
+            }
+            var p = _context.Djelatnici.Find(sifra);
+            if (p == null)
+            {
+                return BadRequest("Ne postoji djelatnik s šifrom " + sifra + ".");
+            }
+            try
+            {
+                var ds = Path.DirectorySeparatorChar;
+                string dir = Path.Combine(Directory.GetCurrentDirectory()
+                    + ds + "wwwroot" + ds + "slike" + ds + "djelatnici");
+
+                if (!System.IO.Directory.Exists(dir))
+                {
+                    System.IO.Directory.CreateDirectory(dir);
+                }
+                var putanja = Path.Combine(dir + ds + sifra + ".png");
+                System.IO.File.WriteAllBytes(putanja, Convert.FromBase64String(slika.Base64));
+                return Ok("Uspješno pohranjena slika");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         protected override void KontrolaBrisanje(Djelatnik entitet)
