@@ -1,5 +1,4 @@
-﻿using DeratizacijaAPP.Models;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 using System.Reflection;
 
 namespace DeratizacijaAPP.Extensions

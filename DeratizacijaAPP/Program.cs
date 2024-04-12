@@ -67,7 +67,7 @@ app.UseHttpsRedirection();
 // SECURITY
 app.UseAuthentication();
 app.UseAuthorization();
-// ENDSECURITY
+// END SECURITY
 
 app.MapControllers();
 
