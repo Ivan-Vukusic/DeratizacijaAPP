@@ -7,8 +7,11 @@ using System.Text;
 
 namespace DeratizacijaAPP.Controllers
 {
+    /// <summary>
+    /// Potrebno za dozvolu rada na aplikaciji
+    /// </summary>
     [ApiController]
-    [Route("api/v1/[controller]")]
+    [Route("api/v1/[controller]")]    
     public class AutorizacijaController : ControllerBase
     {
 
