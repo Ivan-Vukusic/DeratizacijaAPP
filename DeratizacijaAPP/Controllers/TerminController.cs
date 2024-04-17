@@ -32,10 +32,10 @@ namespace DeratizacijaAPP.Controllers
             if (lista != null && lista.Count() > 0)
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append("Termin se ne može obrisati jer sadrži ključne podatke: ");
+                sb.Append("Termin se ne može obrisati jer sadrži objekt: ");
                 foreach (var e in lista)
                 {
-                    sb.Append(e.Datum).Append(", ");
+                    sb.Append(e.Objekt).Append(", ");
                 }
 
                 throw new Exception(sb.ToString().Substring(0, sb.ToString().Length - 2));

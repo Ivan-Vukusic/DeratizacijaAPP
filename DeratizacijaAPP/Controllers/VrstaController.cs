@@ -29,7 +29,7 @@ namespace DeratizacijaAPP.Controllers
                 sb.Append("Vrsta se ne može obrisati jer je postavljena na objektima: ");
                 foreach (var e in lista)
                 {
-                    sb.Append(e.Mjesto).Append(", ");
+                    sb.Append(e.Vrsta).Append(", ");
                 }
 
                 throw new Exception(sb.ToString().Substring(0, sb.ToString().Length - 2));
