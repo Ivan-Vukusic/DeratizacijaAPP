@@ -21,6 +21,37 @@ namespace DeratizacijaAPP.Controllers
             _mapper = new MappingDjelatnik();
         }
 
+        [HttpGet]
+        [Route("trazi/{uvjet}")]
+        public IActionResult TraziDjelatnik(string uvjet)
+        {            
+            if (uvjet == null || uvjet.Length < 3)
+            {
+                return BadRequest(ModelState);
+            }
+                        
+            uvjet = uvjet.ToLower();
+            try
+            {
+                IEnumerable<Djelatnik> query = _context.Djelatnici;
+                var niz = uvjet.Split(" ");
+
+                foreach (var s in uvjet.Split(" "))
+                {
+                    query = query.Where(p => p.Ime.ToLower().Contains(s) || p.Prezime.ToLower().Contains(s));
+                }
+
+                var djelatnici = query.ToList();
+
+                return new JsonResult(_mapper.MapReadList(djelatnici));
+
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
         [HttpPut]
         [Route("postaviSliku/{sifra:int}")]
         public IActionResult PostaviSliku(int sifra, SlikaDTO slika)
@@ -51,6 +82,32 @@ namespace DeratizacijaAPP.Controllers
                 var putanja = Path.Combine(dir + ds + sifra + ".png");
                 System.IO.File.WriteAllBytes(putanja, Convert.FromBase64String(slika.Base64));
                 return Ok("Uspješno pohranjena slika");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("traziStranicenje/{stranica}")]
+        public IActionResult TraziDjelatnikStranicenje(int stranica, string uvjet = "")
+        {
+            var poStranici = 8;
+            uvjet = uvjet.ToLower();
+            try
+            {
+                var djelatnici = _context.Djelatnici
+                    .Where(p => EF.Functions.Like(p.Ime.ToLower(), "%" + uvjet + "%")
+                                || EF.Functions.Like(p.Prezime.ToLower(), "%" + uvjet + "%"))
+                    .Skip((poStranici * stranica) - poStranici)
+                    .Take(poStranici)
+                    .OrderBy(p => p.Prezime)
+                    .ToList();
+
+
+                return new JsonResult(_mapper.MapReadList(djelatnici));
+
             }
             catch (Exception e)
             {
