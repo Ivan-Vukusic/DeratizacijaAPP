@@ -24,19 +24,7 @@ namespace DeratizacijaAPP.Controllers
 
         protected override void KontrolaBrisanje(Termin entitet)
         {
-            var lista = _context.Termini.Include(x => x.Objekt).Where(x => x.Objekt.Sifra == entitet.Sifra)                
-                .ToList();
-
-            if (lista != null && lista.Count() > 0)
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.Append("Termin se ne može obrisati jer sadrži objekt: ");
-                foreach (var e in lista)
-                {
-                    sb.Append(e.Objekt).Append(", ");
-                }
-                throw new Exception(sb.ToString().Substring(0, sb.ToString().Length - 2));
-            }
+            
         }
 
         protected override List<TerminDTORead> UcitajSve()
