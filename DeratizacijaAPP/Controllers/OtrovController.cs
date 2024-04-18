@@ -29,7 +29,7 @@ namespace DeratizacijaAPP.Controllers
                 sb.Append("Otrov se ne može obrisati jer je postavljen na terminima: ");
                 foreach (var e in lista)
                 {
-                    sb.Append(e.Otrov).Append(", ");
+                    sb.Append(e.Otrov.Naziv).Append(", ");
                 }
 
                 throw new Exception(sb.ToString().Substring(0, sb.ToString().Length - 2));
