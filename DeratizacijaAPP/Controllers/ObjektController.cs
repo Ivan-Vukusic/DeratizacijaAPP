@@ -30,7 +30,10 @@ namespace DeratizacijaAPP.Controllers
                 sb.Append("Objekt se ne može obrisati jer je postavljen na terminima: ");
                 foreach (var e in lista)
                 {
-                    sb.Append(e.Objekt.Mjesto).Append(", ");
+                    if (e.Datum.HasValue)
+                    {
+                        sb.Append(e.Datum.Value.ToShortDateString()).Append(", ");
+                    }
                 }
 
                 throw new Exception(sb.ToString().Substring(0, sb.ToString().Length - 2));
